@@ -1,23 +1,33 @@
 #include "NRF24_HAL.h"
 
-
-static uint8_t nrf24_dummy_tx = 0xFF;
-static uint8_t nrf24_dummy_rx;
-
-
-void NRF24_SPI_TxRx(uint8_t *tx, uint8_t *rx, uint16_t len)
-{
-
-    uint8_t *ptx = tx ? tx : &nrf24_dummy_tx;
-    uint8_t *prx = rx ? rx : &nrf24_dummy_rx;
-
-    HAL_SPI_TransmitReceive(NRF24_SPI_HANDLE, ptx, prx, len, 1000);
+void NRF24_HAL_CE_Enable(void) {
+    HAL_GPIO_WritePin(NRF24_CE_PORT, NRF24_CE_PIN, GPIO_PIN_SET);
 }
 
+void NRF24_HAL_CE_Disable(void) {
+    HAL_GPIO_WritePin(NRF24_CE_PORT, NRF24_CE_PIN, GPIO_PIN_RESET);
+}
 
-void NRF24_DelayUs(uint32_t us)
-{
-    uint32_t start = HAL_GetTick();
-    uint32_t wait_ms = (us + 999) / 1000;
-    while ((HAL_GetTick() - start) < wait_ms) { __NOP(); }
+void NRF24_HAL_CS_Select(void) {
+    HAL_GPIO_WritePin(NRF24_CSN_PORT, NRF24_CSN_PIN, GPIO_PIN_RESET);
+}
+
+void NRF24_HAL_CS_UnSelect(void) {
+    HAL_GPIO_WritePin(NRF24_CSN_PORT, NRF24_CSN_PIN, GPIO_PIN_SET);
+}
+
+HAL_StatusTypeDef NRF24_HAL_SPI_Transmit(uint8_t *pData, uint16_t Size, uint32_t Timeout) {
+    return HAL_SPI_Transmit(NRF24_SPI, pData, Size, Timeout);
+}
+
+HAL_StatusTypeDef NRF24_HAL_SPI_Receive(uint8_t *pData, uint16_t Size, uint32_t Timeout) {
+    return HAL_SPI_Receive(NRF24_SPI, pData, Size, Timeout);
+}
+
+void NRF24_HAL_Delay(uint32_t milliseconds) {
+    HAL_Delay(milliseconds);
+}
+
+uint32_t NRF24_HAL_GetTick(void) {
+    return HAL_GetTick();
 }

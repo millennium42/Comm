@@ -1,29 +1,17 @@
 #ifndef NRF24_HAL_H_
 #define NRF24_HAL_H_
 
+#include "NRF24_DEF.h" /
 
-#include "stm32f4xx_hal.h"
-#include <stdint.h>
+void NRF24_HAL_CE_Enable(void);
+void NRF24_HAL_CE_Disable(void);
+void NRF24_HAL_CS_Select(void);
+void NRF24_HAL_CS_UnSelect(void);
 
+HAL_StatusTypeDef NRF24_HAL_SPI_Transmit(uint8_t *pData, uint16_t Size, uint32_t Timeout);
+HAL_StatusTypeDef NRF24_HAL_SPI_Receive(uint8_t *pData, uint16_t Size, uint32_t Timeout);
 
-#define NRF24_CE_PORT   GPIOB
-#define NRF24_CE_PIN    GPIO_PIN_1
+void NRF24_HAL_Delay(uint32_t milliseconds);
+uint32_t NRF24_HAL_GetTick(void);
 
-#define NRF24_CSN_PORT  GPIOB
-#define NRF24_CSN_PIN   GPIO_PIN_0
-
-extern SPI_HandleTypeDef hspi1;
-#define NRF24_SPI_HANDLE   (&hspi1)
-
-static inline void NRF24_CE_High (void) { HAL_GPIO_WritePin(NRF24_CE_PORT,  NRF24_CE_PIN,  GPIO_PIN_SET);   }
-static inline void NRF24_CE_Low  (void) { HAL_GPIO_WritePin(NRF24_CE_PORT,  NRF24_CE_PIN,  GPIO_PIN_RESET); }
-
-static inline void NRF24_CSN_High(void) { HAL_GPIO_WritePin(NRF24_CSN_PORT, NRF24_CSN_PIN, GPIO_PIN_SET);   }
-static inline void NRF24_CSN_Low (void) { HAL_GPIO_WritePin(NRF24_CSN_PORT, NRF24_CSN_PIN, GPIO_PIN_RESET); }
-
-
-void NRF24_SPI_TxRx(uint8_t *tx, uint8_t *rx, uint16_t len);
-void NRF24_DelayUs(uint32_t us);
-
-#endif /* NRF24_HAL_H_ */
-
+#endif
