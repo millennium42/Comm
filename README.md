@@ -47,6 +47,8 @@ Edite o arquivo `NRF24_DEF.h` para corresponder à sua configuração de hardwar
 // NRF24_DEF.h
 
 // Definições de pinos NRF24 - Adapte conforme sua placa
+#include "stm32f4xx_hal.h"
+
 #define NRF24_CE_PORT   GPIOB      // Porta do pino CE (ex: GPIOB)
 #define NRF24_CE_PIN    GPIO_PIN_1 // Pino CE (ex: GPIO_PIN_1)
 
