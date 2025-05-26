@@ -1,7 +1,7 @@
 #ifndef NRF24_HAL_H_
 #define NRF24_HAL_H_
 
-#include "NRF24_DEF.h" /
+#include "NRF24_DEF.h" 
 
 void NRF24_HAL_CE_Enable(void);
 void NRF24_HAL_CE_Disable(void);

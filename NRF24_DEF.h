@@ -1,8 +1,7 @@
 #ifndef NRF24_DEF_H_
 #define NRF24_DEF_H_
 
-#include "stm32f4xx_hal.h" /
-
+#include "stm32f4xx_hal.h" 
 
 #define NRF24_CE_PORT   GPIOB
 #define NRF24_CE_PIN    GPIO_PIN_1
