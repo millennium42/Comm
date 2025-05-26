@@ -230,15 +230,77 @@ HAL_Delay(10);
 ### STM32
 <img align="center" src="./Assets/1.png">
 
-## Exemplo no Robô `VSSS`
 
-```c
-
-
-```
 ## Exemplo no Robô `SSL`
-
+### Transmissor:
 ```c
 
+#include "comm/COMM.h"
 
+uint8_t NRF_TX_ADDRESS[5] = {0xE7, 0xE7, 0xE7, 0xE7, 0xE7};    // Endereço de transmissão
+uint8_t NRF_RX_P1_ADDRESS[5] = {0xE7, 0xE7, 0xE7, 0xE7, 0xE7}; // Endereço do Pipe 0 para ACKs no transmissor
+uint8_t NRF_CHANNEL_MAIN = 76;                                 // Canal RF
+
+ssl_payload_t ssl_command_data;
+uint8_t local_packet_seq_counter = 0;
+
+#ifdef __GNUC__
+  #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+#else
+  #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+#endif
+
+PUTCHAR_PROTOTYPE
+{
+  HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
+  return ch;
+}
+
+
+  printf("\r\n-- Transmissor NRF24 com Camada COMM --\r\n");
+
+  if (!Comm_Init(COMM_ROBOT_TYPE_SSL,
+                 COMM_NODE_MODE_TRANSMITTER,
+                 NRF_CHANNEL_MAIN,
+                 NRF_TX_ADDRESS,
+                 NRF_RX_P1_ADDRESS,
+                 0 )) {
+      printf("Falha ao inicializar módulo de comunicação!\r\n");
+      Error_Handler();
+  }
+
+  printf("Módulo COMM inicializado como Transmissor SSL.\r\n");
+
+
+  while (1)
+  {
+	memset(&ssl_command_data, 0, sizeof(ssl_payload_t));
+
+	ssl_command_data.command_subtype = SSL_CMD_SET_VELOCITIES; // Exemplo de subtipo
+	ssl_command_data.robot_id = 1;                             // ID do Robô
+	ssl_command_data.vx = (int16_t)(100 + (local_packet_seq_counter % 10) * 5); // Vx: 100, 105, ..., 145, 100...
+	ssl_command_data.vy = (int16_t)(20 - (local_packet_seq_counter % 5) * 2);  // Vy: 20, 18, ..., 12, 20...
+	ssl_command_data.vw = 0;
+	ssl_command_data.referee_command = 0;
+	ssl_command_data.kick_front = (local_packet_seq_counter % 15 == 0) ? 1 : 0; // Chuta a cada 15 pacotes
+	ssl_command_data.kick_chip = 0;
+	ssl_command_data.capacitor_charge = 1; // Mantém carregando
+	ssl_command_data.kick_strength = 150;
+	ssl_command_data.dribbler_on = (local_packet_seq_counter % 3 == 0) ? 1 : 0;
+	ssl_command_data.dribbler_speed = 200;
+	ssl_command_data.movement_locked = 0;
+	ssl_command_data.critical_move_turbo = 0;
+
+
+    if (Comm_Send_SSL_Message(&ssl_command_data)) {
+        printf("Main: Pacote SSL (ID:%d, Vx:%d) enviado.\r\n",
+               ssl_command_data.robot_id, ssl_command_data.vx);
+        HAL_GPIO_TogglePin(LED_DEBUG_GPIO_Port, LED_DEBUG_Pin);
+    } else {
+        printf("Main: Falha ao enviar pacote SSL pela camada Comm.\r\n");
+    }
+
+    local_packet_seq_counter++;
+  }
 ```
+### Receptor:
