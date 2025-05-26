@@ -256,9 +256,10 @@ PUTCHAR_PROTOTYPE
   return ch;
 }
 
+int main(void)
+{
 
   printf("\r\n-- Transmissor NRF24 com Camada COMM --\r\n");
-
   if (!Comm_Init(COMM_ROBOT_TYPE_SSL,
                  COMM_NODE_MODE_TRANSMITTER,
                  NRF_CHANNEL_MAIN,
@@ -302,5 +303,94 @@ PUTCHAR_PROTOTYPE
 
     local_packet_seq_counter++;
   }
+}
 ```
 ### Receptor:
+```c
+#include "Comm/COMM.h"
+
+uint8_t NRF_RECEIVER_TX_ADDRESS_FOR_ACKS[5] = {0xD7, 0xD7, 0xD7, 0xD7, 0xD7};
+uint8_t NRF_RECEIVER_RX_P1_ADDRESS[5] = {0xE7, 0xE7, 0xE7, 0xE7, 0xE7};
+uint8_t NRF_RECEIVER_RX_P2_LSB = 0xC3;
+uint8_t NRF_COMMON_CHANNEL = 76;
+
+#ifdef __GNUC__
+  #define PUTCHAR_PROTOTYPE int __io_putchar(int ch) // Define a macro aqui
+#else
+  #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+#endif /* __GNUC__ */
+
+PUTCHAR_PROTOTYPE
+{
+  HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
+  return ch;
+}
+
+void App_HandleSSLData(const ssl_payload_t* ssl_data, uint8_t robot_id, uint8_t seq_num);
+void App_HandleVSSSData(const vsss_payload_t* vsss_data, uint8_t robot_id, uint8_t seq_num);
+void App_HandleDebugText(const char* text_data, uint8_t seq_num);
+
+
+void App_HandleSSLData(const ssl_payload_t* ssl_data, uint8_t robot_id, uint8_t seq_num) {
+    printf("CALLBACK SSL: ID=%d, Seq=%d -> Subtipo=%d, Vx=%d, Vy=%d, Vw=%d, KickF=%d, Drib=%d, Turbo=%d\r\n",
+           robot_id, // robot_id é passado diretamente para o callback
+           seq_num,
+           ssl_data->command_subtype,
+           ssl_data->vx,
+           ssl_data->vy,
+           ssl_data->vw,
+           ssl_data->kick_front,
+           ssl_data->dribbler_on,
+           ssl_data->critical_move_turbo);
+    // Aqui você colocaria a lógica para controlar o robô SSL com base nos dados recebidos
+    // Ex: Robot_SSL_ExecuteCommand(robot_id, ssl_data);
+    HAL_GPIO_TogglePin(LED_DEBUG_GPIO_Port, LED_DEBUG_Pin); // Pisca LED ao processar
+}
+
+void App_HandleVSSSData(const vsss_payload_t* vsss_data, uint8_t robot_id, uint8_t seq_num) {
+    printf("CALLBACK VSSS: ID=%d, Seq=%d -> Subtipo=%d, M1=%d, M2=%d, PWM?=%d\r\n",
+           robot_id, // robot_id é passado diretamente para o callback
+           seq_num,
+           vsss_data->command_subtype,
+           vsss_data->motor1_value,
+           vsss_data->motor2_value,
+           vsss_data->is_pwm_flag);
+    // Aqui você colocaria a lógica para controlar o robô VSSS
+    // Ex: Robot_VSSS_ExecuteCommand(robot_id, vsss_data);
+    HAL_GPIO_TogglePin(LED_DEBUG_GPIO_Port, LED_DEBUG_Pin); // Pisca LED ao processar
+}
+
+void App_HandleDebugText(const char* text_data, uint8_t seq_num) {
+    printf("CALLBACK DEBUG: Seq=%d -> Texto='%s'\r\n", seq_num, text_data);
+    HAL_GPIO_TogglePin(LED_DEBUG_GPIO_Port, LED_DEBUG_Pin); // Pisca LED ao processar
+}
+
+
+int main(void)
+{
+
+  printf("\r\n-- Receptor NRF24 com Camada COMM --\r\n");
+
+  if (!Comm_Init(COMM_ROBOT_TYPE_UNDEFINED, // Este nó é um receptor genérico ou específico
+                 COMM_NODE_MODE_RECEIVER,
+                 NRF_COMMON_CHANNEL,
+                 NRF_RECEIVER_TX_ADDRESS_FOR_ACKS, // Endereço que o NRF usaria para enviar ACKs (Pipe0)
+                 NRF_RECEIVER_RX_P1_ADDRESS,     // Endereço principal de escuta (Pipe1)
+                 NRF_RECEIVER_RX_P2_LSB)) {
+      printf("Falha ao inicializar módulo de comunicação como Receptor!\r\n");
+      Error_Handler();
+  }
+
+  Comm_Register_SSL_Packet_Handler(App_HandleSSLData);
+  Comm_Register_VSSS_Packet_Handler(App_HandleVSSSData);
+  Comm_Register_DebugText_Packet_Handler(App_HandleDebugText);
+
+  printf("Módulo COMM inicializado como Receptor. Aguardando pacotes...\r\n");
+
+  while (1)
+  {
+	Comm_ProcessReceivedPackets();
+	HAL_Delay(1);
+}
+}
+```
