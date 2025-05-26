@@ -230,7 +230,10 @@ if (isDataAvailable(1)) { // Verifica dados no Pipe 1
 HAL_Delay(10);
 ```
 ### STM32
-<img align="center" src="./Assets/1.png">
+
+<p align="center">
+  <img src="./Assets/1.png">
+</p>
 
 
 ## Exemplo no Robô `SSL`
