@@ -1,8 +1,6 @@
-#include "COMM.h"
-#include "NRF24_CORE.h"
-#include "COMM_PACKETS.h"
-
-
+#include <Comm/COMM.h>
+#include <Comm/COMM_PACKETS.h>
+#include <Comm/NRF24_CORE.h>
 #include <string.h>
 #include <stdio.h>
 

@@ -1,11 +1,10 @@
 #ifndef COMM_H_
 #define COMM_H_
 
+#include <Comm/COMM_PACKETS.h>
+#include <Comm/NRF24_CORE.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include "COMM_PACKETS.h"
-#include "NRF24_CORE.h"
-
 #include <stdio.h>
 #include <string.h>
 

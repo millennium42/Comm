@@ -1,5 +1,5 @@
-#include "NRF24_CORE.h"
-#include "NRF24_HAL.h"
+#include <Comm/NRF24_CORE.h>
+#include <Comm/NRF24_HAL.h>
 #include <string.h>
 
 void nrf24_WriteReg(uint8_t Reg, uint8_t Data) {

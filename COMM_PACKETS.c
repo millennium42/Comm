@@ -1,4 +1,4 @@
-#include "COMM_PACKETS.h"
+#include <Comm/COMM_PACKETS.h>
 #include <string.h>
 
 void Comm_Packets_Create_VSSSMessage(comm_packet_t* packet_buffer,

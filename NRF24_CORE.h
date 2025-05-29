@@ -1,7 +1,7 @@
 #ifndef NRF24_CORE_H_
 #define NRF24_CORE_H_
 
-#include "NRF24_DEF.h"
+#include <Comm/NRF24_DEF.h>
 #include <stdint.h>
 
 
