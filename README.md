@@ -106,7 +106,7 @@ No topo do seu `main.c` (dentro de `/* USER CODE BEGIN 0 */`), defina qual modo 
 ```
 
 
-## Como Utilizar (`API`)
+## Como Utilizar (`API`) (DEPRECATED)
 
 ### **1. Inclusão de Headers**
 
@@ -117,7 +117,7 @@ No seu `main.c` ou em outros arquivos que utilizarão a biblioteca:
 #include "Comm/COMM_PACKETS.h" 
 ```
 
-### **2. Inicialização do Módulo NRF24**
+### **2. Inicialização do Módulo NRF24** 
 
 ```c
 // Em main.c, dentro de /* USER CODE BEGIN 2 */
@@ -183,9 +183,9 @@ if (NRF24_Transmit((uint8_t *)&nrf_packet_buffer, sizeof(comm_packet_t))) {
 HAL_Delay(100); // Intervalo entre envios
 ```
 
-### **6. Recebendo Dados (Exemplo Receptor)**
+### **6. Recebendo Dados (Exemplo Receptor) (DEPRECATED)** 
 
-No loop principal do receptor (`/* USER CODE BEGIN 3 */`):
+ No loop principal do receptor (`/* USER CODE BEGIN 3 */`):
 
 ```c
 
