@@ -237,7 +237,7 @@ HAL_Delay(10);
 
 
 ## Exemplo no Robô `SSL`
-### Transmissor:
+### Transmissor (DEPRECATED):
 ```c
 
 #include "comm/COMM.h"
@@ -310,7 +310,7 @@ int main(void)
   }
 }
 ```
-### Receptor:
+### Receptor (DEPRECATED):
 ```c
 #include "Comm/COMM.h"
 
