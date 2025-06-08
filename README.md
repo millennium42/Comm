@@ -153,7 +153,7 @@ As funções em COMM_PACKETS.c ajudam a criar pacotes formatados.
 * `Comm_Packets_Create_SSLMessage(comm_packet_t* packet_buffer, uint8_t seq_num, const ssl_payload_t* ssl_payload_data);`
 * `Comm_Packets_Create_DebugText(comm_packet_t* packet_buffer, uint8_t seq_num, const char* text_payload);`
 
-### **5. Enviando Dados (Exemplo Transmissor)**
+### **5. Enviando Dados (Exemplo Transmissor) (DEPRECATED)**
 
 No loop principal do transmissor (`/* USER CODE BEGIN 3 */`):
 
