@@ -93,7 +93,7 @@ typedef enum {
   Define o cabeçalho comum (tipo principal, número de sequência).
 * `comm_packet_t`: A estrutura final do pacote de 32 bytes, com o cabeçalho e uma union para os diferentes payloads.
 
-### **3. Seleção de Nó em `main.c`**
+### **3. Seleção de Nó em `main.c` (DEPRECATED)**
 
 No topo do seu `main.c` (dentro de `/* USER CODE BEGIN 0 */`), defina qual modo o dispositivo operará:
 
