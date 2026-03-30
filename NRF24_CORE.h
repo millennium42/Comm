@@ -29,5 +29,7 @@ uint8_t isDataAvailable(uint8_t pipenum);
 void NRF24_Receive(uint8_t *data);
 
 void NRF24_ReadAll(uint8_t *data);
+void NRF24_ServiceWatchdog(void);
+uint32_t NRF24_HAL_GetTick(void);
 
 #endif

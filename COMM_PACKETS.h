@@ -54,6 +54,8 @@ typedef struct __attribute__((packed)) {
     int16_t  vx;
     int16_t  vy;
     int16_t  vw;
+    int16_t  theta;
+    int16_t  theta_target;
     uint8_t  referee_command;
     uint8_t  kick_front;
     uint8_t  kick_chip;
