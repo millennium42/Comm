@@ -45,3 +45,4 @@ ehthumbs_vista.db
 *.stackdump
 Desktop.ini
 $RECYCLE.BIN/
+.vscode/settings.json
