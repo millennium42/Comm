@@ -3,6 +3,7 @@
 #include "Comm/NRF24_CORE.h"
 #include "Comm/COMM_PACKETS.h"
 #include <string.h>
+#include <stdio.h>
 
 static comm_robot_type_t    s_current_robot_type;
 static uint8_t              s_packet_seq_counter = 0;
@@ -18,21 +19,22 @@ static comm_vsss_command_handler_t   s_vsss_cmd_handler = NULL;
 static comm_ssl_telemetry_handler_t  s_ssl_tel_handler = NULL;
 static comm_vsss_telemetry_handler_t s_vsss_tel_handler = NULL;
 static comm_debug_text_handler_t     s_debug_text_handler = NULL;
-static uint32_t                      s_last_fifo_flush_tick = 0;
+
 
 static bool send_packet_p2p(comm_packet_t* packet_to_send) {
     NRF24_TxMode(s_peer_target_address, s_rf_channel);
     bool success = NRF24_Transmit((uint8_t*)packet_to_send, sizeof(comm_packet_t));
-    NRF24_RxMode(s_my_listening_address, 0, s_rf_channel);
+    NRF24_RxMode(s_my_listening_address, 0, s_rf_channel); 
+    
     return success;
 }
 
-void Comm_Set_TargetAddress(const uint8_t peer_target_address[5]) {
-    if (peer_target_address == NULL) {
-        return;
-    }
-    memcpy(s_peer_target_address, peer_target_address, 5);
-}
+
+
+
+
+
+
 
 bool Comm_Init_P2P(comm_robot_type_t robot_type,
                    uint8_t channel,
@@ -45,9 +47,11 @@ bool Comm_Init_P2P(comm_robot_type_t robot_type,
     memcpy(s_my_listening_address, my_listening_address, 5);
     memcpy(s_peer_target_address, peer_target_address, 5);
 
+    printf("Comm_Init_P2P: Robô tipo %d, Canal %d\r\n", robot_type, channel);
+
     NRF24_Init();
     NRF24_RxMode(s_my_listening_address, 0, s_rf_channel); // Inicia escutando
-    s_last_fifo_flush_tick = NRF24_HAL_GetTick();
+    printf("NRF24 configurado como Transceptor, iniciando em modo RX.\r\n");
     return true;
 }
 
@@ -90,12 +94,12 @@ int16_t Comm_Send_VSSS_Telemetry(const vsss_telemetry_payload_t* tel_payload_dat
     }
     return -1;
 }
-int16_t Comm_Send_DebugText_Message(const char* text_payload) {
-    if (text_payload == NULL) return -1;
+int16_t Comm_Send_DebugText_Message(const char* text_payload) { 
+    if (text_payload == NULL) return -1; 
     uint8_t current_seq = s_packet_seq_counter++;
     Comm_Packets_Create_DebugText(&s_tx_packet_buffer, current_seq, text_payload);
     if (send_packet_p2p(&s_tx_packet_buffer)) {
-        return current_seq;
+        return current_seq; 
     }
     return -1;
 }
@@ -128,14 +132,8 @@ void Comm_ProcessReceivedPackets(void) {
             case MAIN_PACKET_TYPE_DEBUG_TEXT:
                 break;
             default:
+                printf("Comm: Tipo de pacote principal desconhecido: %d\r\n", s_rx_packet_buffer.header.main_type);
                 break;
         }
-    }
-
-    uint32_t now = NRF24_HAL_GetTick();
-    if ((now - s_last_fifo_flush_tick) >= 1000U) {
-        nrf24_flush_rx();
-        nrf24_clear_interrupts();
-        s_last_fifo_flush_tick = now;
     }
 }

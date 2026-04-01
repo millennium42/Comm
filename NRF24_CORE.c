@@ -54,14 +54,14 @@ void nrf24_reset_registers(void) {
     NRF24_HAL_CE_Disable();
 
     nrf24_WriteReg(CONFIG, 0x08);
-    nrf24_WriteReg(EN_AA, 0x00);
+    nrf24_WriteReg(EN_AA, 0x3F);
     nrf24_WriteReg(EN_RXADDR, 0x03);
     nrf24_WriteReg(SETUP_AW, 0x03);
-    nrf24_WriteReg(SETUP_RETR, 0x00);
+    nrf24_WriteReg(SETUP_RETR, 0x03);
 
 
     nrf24_WriteReg(RF_CH, 0x02);
-    nrf24_WriteReg(RF_SETUP, 0x26);   // 250 kbps
+    nrf24_WriteReg(RF_SETUP, 0x0E);   // 2mbs
     nrf24_WriteReg(STATUS, (1 << RX_DR_BIT) | (1 << TX_DS_BIT) | (1 << MAX_RT_BIT));
 
 
@@ -114,11 +114,11 @@ void NRF24_Init(void) {
 
 
     nrf24_WriteReg(CONFIG, (1 << 3) | (1 << 2));
-    nrf24_WriteReg(EN_AA, 0x00);
+    nrf24_WriteReg(EN_AA, 0x3F);
 
-    // Taxa de dados: 250 kbps (RF_SETUP=0x26)
+    // Taxa de dados: 250Kbps (RF_SETUP=0x26)
     nrf24_WriteReg(RF_SETUP, 0x26);
-    nrf24_WriteReg(SETUP_RETR, 0x00);
+    nrf24_WriteReg(SETUP_RETR, ((15) << 4) | NRF24_MAX_RETRANSMISSIONS);
 
     uint8_t payload_size = 32;
     nrf24_WriteReg(RX_PW_P0, payload_size);
@@ -290,4 +290,3 @@ void NRF24_ReadAll(uint8_t *data) {
     *(data + j++) = nrf24_ReadReg(FEATURE);
 
 }
-void NRF24_ServiceWatchdog(void) {}
