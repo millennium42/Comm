@@ -1,0 +1,47 @@
+# =========================
+# Artefatos de Compilação C/C++
+# =========================
+*.o
+*.d
+*.elf
+*.hex
+*.bin
+*.map
+*.su
+*.list
+build/
+Debug/
+Release/
+
+# =========================
+# Visual Studio Code
+# =========================
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# Nota: As linhas com "!" garantem que as configurações base do projeto no VS Code
+# sejam compartilhadas no Git. Se não quiseres compartilhar o settings.json 
+# (por ter configurações de caminhos muito específicas do teu PC), 
+# basta remover o "!" daquela linha.
+
+# =========================
+# Ficheiros do Sistema Operativo
+# =========================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+Desktop.ini
+$RECYCLE.BIN/
